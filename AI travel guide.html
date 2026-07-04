@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wanderpin — a travel guide worth pinning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-navy: #0B1E3D;
+    --ocean: #1D5DAD;
+    --cobalt: #2E6FD9;
+    --sky-tint: #EAF3FC;
+    --cloud: #FFFFFF;
+    --coral: #FF8A5B;
+    --line: rgba(11,30,61,0.10);
+    --radius: 18px;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    font-family:'Inter', sans-serif;
+    background: var(--sky-tint);
+    color: var(--ink-navy);
+  }
+  h1,h2,h3, .display{
+    font-family:'Fraunces', serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background: var(--ink-navy);
+    color: var(--cloud);
+    padding: 22px 6vw 60px;
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:1200px;
+    margin:0 auto;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.3rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .logo::before{
+    content:"";
+    width:10px; height:10px;
+    background: var(--coral);
+    border-radius: 50%;
+    display:inline-block;
+  }
+  .nav-links{
+    display:flex;
+    gap:28px;
+    font-size:0.92rem;
+    color: rgba(255,255,255,0.75);
+  }
+  .nav-links a{ color:inherit; text-decoration:none; }
+  .nav-links a:hover{ color: var(--cloud); }
+
+  .hero{
+    max-width:1200px;
+    margin: 56px auto 0;
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    line-height:1.08;
+    font-weight:600;
+    margin:0 0 18px;
+  }
+  .hero h1 em{
+    font-style: italic;
+    color: var(--coral);
+  }
+  .hero p{
+    color: rgba(255,255,255,0.7);
+    font-size:1.05rem;
+    max-width: 46ch;
+    margin:0 0 26px;
+  }
+  .search{
+    display:flex;
+    background: rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+    padding: 6px 6px 6px 20px;
+    max-width: 460px;
+  }
+  .search input{
+    flex:1;
+    background:none;
+    border:none;
+    outline:none;
+    color: var(--cloud);
+    font-family:'Inter', sans-serif;
+    font-size:0.95rem;
+  }
+  .search input::placeholder{ color: rgba(255,255,255,0.45); }
+  .search button{
+    background: var(--coral);
+    color: var(--ink-navy);
+    border:none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-weight:600;
+    font-size:0.9rem;
+    cursor:pointer;
+  }
+
+  .hero-postcard{
+    background: var(--cloud);
+    color: var(--ink-navy);
+    border-radius: var(--radius);
+    padding: 22px;
+    transform: rotate(3deg);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.28);
+    position:relative;
+  }
+  .hero-postcard::after{
+    content:"✈";
+    position:absolute;
+    top:-14px; right:22px;
+    background: var(--coral);
+    color: var(--ink-navy);
+    width:40px; height:40px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.1rem;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  }
+  .hero-postcard .stamp-label{
+    font-size:0.72rem;
+    letter-spacing: 0.14em;
+    text-transform:uppercase;
+    color: var(--ocean);
+    font-weight:700;
+  }
+  .hero-postcard h3{
+    margin: 8px 0 6px;
+    font-size:1.3rem;
+  }
+  .hero-postcard p{
+    font-size:0.92rem;
+    color: rgba(11,30,61,0.7);
+    margin:0;
+  }
+
+  /* filter pills */
+  .filters{
+    max-width:1200px;
+    margin: 46px auto 0;
+    padding: 0 6vw;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .pill{
+    border:1px solid var(--line);
+    background: var(--cloud);
+    color: var(--ink-navy);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size:0.85rem;
+    font-weight:500;
+    cursor:pointer;
+    transition: all 0.15s ease;
+  }
+  .pill:hover{ border-color: var(--cobalt); }
+  .pill.active{
+    background: var(--cobalt);
+    color: var(--cloud);
+    border-color: var(--cobalt);
+  }
+
+  /* ---------- Masonry grid ---------- */
+  main{
+    max-width:1200px;
+    margin: 30px auto 100px;
+    padding: 0 6vw;
+  }
+  .grid{
+    column-count: 4;
+    column-gap: 18px;
+  }
+  @media (max-width: 1000px){ .grid{ column-count: 3; } }
+  @media (max-width: 720px){ .grid{ column-count: 2; } }
+  @media (max-width: 460px){ .grid{ column-count: 1; } }
+
+  .card{
+    break-inside: avoid;
+    margin-bottom: 18px;
+    background: var(--cloud);
+    border-radius: var(--radius);
+    overflow:hidden;
+    border:1px solid var(--line);
+    position:relative;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(11,30,61,0.14);
+  }
+  .card-media{
+    width:100%;
+    aspect-ratio: var(--ratio, 4/5);
+    position:relative;
+    overflow:hidden;
+    background: var(--accent, var(--ocean));
+    border-top: 5px solid var(--accent, var(--ocean));
+  }
+  .card-media img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  .card-media::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+  }
+  .card-media .place-label{
+    position:absolute;
+    left:14px; bottom:12px;
+    right:14px;
+    color:#fff;
+    font-family:'Fraunces', serif;
+    font-size:1.1rem;
+    font-weight:600;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    z-index:2;
+  }
+  .card-stamp{
+    position:absolute;
+    top:12px; right:12px;
+    background: var(--accent, var(--coral));
+    color: #fff;
+    font-size:0.66rem;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding: 5px 10px;
+    border-radius: 8px;
+    z-index:2;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  .card-body{ padding: 14px 16px 16px; }
+  .card-body p{
+    font-size:0.87rem;
+    color: rgba(11,30,61,0.68);
+    margin: 0 0 10px;
+    line-height:1.45;
+  }
+  .places-list{
+    list-style:none;
+    margin: 0 0 12px;
+    padding: 0;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  .places-list li{
+    font-size:0.8rem;
+    color: rgba(11,30,61,0.78);
+    padding-left: 14px;
+    position:relative;
+    line-height:1.4;
+  }
+  .places-list li::before{
+    content:"";
+    position:absolute;
+    left:0; top:6px;
+    width:7px; height:7px;
+    border-radius:50%;
+    background: var(--accent, var(--ocean));
+  }
+  .places-list li .pname{ font-weight:700; color: var(--ink-navy); }
+  .places-list li .ploc{
+    display:block;
+    font-size:0.72rem;
+    color: var(--accent, var(--ocean));
+    font-weight:600;
+    margin-top:1px;
+  }
+  .card-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:0.76rem;
+    color: var(--ocean);
+    font-weight:600;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+  .save-btn{
+    background: var(--sky-tint);
+    border:none;
+    color: var(--ocean);
+    font-size:0.76rem;
+    font-weight:700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor:pointer;
+  }
+  .save-btn.saved{ background: var(--accent, var(--coral)); color: #fff; }
+
+  /* ---------- Chatbot ---------- */
+  .chat-toggle{
+    position: fixed;
+    bottom: 26px; right: 26px;
+    background: var(--ink-navy);
+    color: var(--cloud);
+    border:none;
+    width: 60px; height:60px;
+    border-radius: 50%;
+    font-size:1.4rem;
+    cursor:pointer;
+    box-shadow: 0 14px 30px rgba(11,30,61,0.35);
+    z-index: 40;
+  }
+  .chat-window{
+    position: fixed;
+    bottom: 100px; right: 26px;
+    width: 340px;
+    max-height: 480px;
+    background: var(--cloud);
+    border-radius: var(--radius);
+    box-shadow: 0 24px 60px rgba(11,30,61,0.28);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    z-index: 40;
+    transform-origin: bottom right;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+  .chat-window.hidden{
+    transform: scale(0.9);
+    opacity:0;
+    pointer-events:none;
+  }
+  .chat-head{
+    background: var(--ocean);
+    color:#fff;
+    padding: 14px 16px;
+  }
+  .chat-head .eyebrow{
+    font-size:0.68rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    opacity:0.8;
+  }
+  .chat-head h3{ margin:2px 0 0; font-size:1.05rem; }
+  .chat-log{
+    flex:1;
+    padding: 14px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    font-size:0.87rem;
+    background: var(--sky-tint);
+  }
+  .msg{
+    padding: 9px 13px;
+    border-radius: 14px;
+    max-width: 85%;
+    line-height:1.42;
+    white-space: pre-wrap;
+  }
+  .msg.bot{
+    background: var(--cloud);
+    border: 1px solid var(--line);
+    align-self:flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .msg.user{
+    background: var(--cobalt);
+    color:#fff;
+    align-self:flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-input{
+    display:flex;
+    border-top: 1px solid var(--line);
+    background: var(--cloud);
+  }
+  .chat-input input{
+    flex:1;
+    border:none;
+    padding: 12px 14px;
+    font-family:'Inter', sans-serif;
+    font-size:0.87rem;
+    outline:none;
+  }
+  .chat-input button{
+    border:none;
+    background: var(--coral);
+    padding: 0 18px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .typing{ color: rgba(11,30,61,0.5); font-style: italic; }
+
+  footer{
+    text-align:center;
+    padding: 30px 6vw 50px;
+    color: rgba(11,30,61,0.5);
+    font-size:0.82rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Wanderpin</div>
+    <div class="nav-links">
+      <a href="#grid">Explore</a>
+      <a href="#" onclick="openChat();return false;">Ask the Guide</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <h1>Pin the trip <em>before</em> you take it.</h1>
+      <p>A board of places worth going, and a guide who actually answers your questions — budget, season, vibe, all of it.</p>
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Try 'quiet beach, low budget'…" />
+        <button onclick="handleSearch()">Search</button>
+      </div>
+    </div>
+    <div class="hero-postcard">
+      <div class="stamp-label">Postcard from</div>
+      <h3>Kyoto, Japan</h3>
+      <p>Wooden temples, moss gardens, and mornings that start before the crowds do.</p>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters"></div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>Wanderpin — built with a blue heart. Notes come from the guide's own knowledge base, not live listings.</footer>
+
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬</button>
+<div class="chat-window hidden" id="chatWindow">
+  <div class="chat-head">
+    <div class="eyebrow">Ask the Guide</div>
+    <h3>Where should I go?</h3>
+  </div>
+  <div class="chat-log" id="chatLog">
+    <div class="msg bot">Tell me a vibe, a season, or a budget — I'll pull matching destinations from the guide.</div>
+  </div>
+  <div class="chat-input">
+    <input id="chatInput" type="text" placeholder="e.g. mountains and hiking in summer" onkeydown="if(event.key==='Enter') sendChat()" />
+    <button onclick="sendChat()">Send</button>
+  </div>
+</div>
+
+<script>
+  const API_BASE = '';
+  const ratios = [4/5, 1/1, 4/6, 3/4, 4/5, 1/1, 3/4, 1/1];
+
+  const fallbackData = [
+    {id:'kyoto', name:'Kyoto, Japan', accent:'#E4572E', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Fushimi-Inari-Shrine-Senbon-Torii-2018-Luka-Peternel.jpg?width=700', tags:['temples','culture','autumn'], bestTime:'Oct–Nov or April', budget:'moderate to high', summary:"Wooden temples, moss gardens, and quiet backstreets best explored early in the morning.", places:[{name:'Fushimi Inari Taisha', location:'Fushimi Ward', note:'Thousands of torii gates up Mount Inari.'},{name:'Gion District', location:'Hanami-koji Street', note:'Old teahouses and lantern-lit lanes.'},{name:'Arashiyama Bamboo Grove', location:'Sagaogurayama', note:'A towering bamboo corridor.'}]},
+    {id:'lisbon', name:'Lisbon, Portugal', accent:'#F2A541', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Belem_Tower,_Lisbon,_Portugal.JPG?width=700', tags:['budget','food','coast'], bestTime:'Mar–May, Sep–Oct', budget:'low to moderate', summary:'A hilly, sun-bleached city with some of the best food-per-dollar value in Europe.', places:[{name:'Belém Tower', location:'Praça do Império', note:'16th-century river fortress.'},{name:'Alfama District', location:'Rua de São Pedro', note:'Old town, narrow lanes, fado bars.'},{name:'Tram 28 Route', location:'From Martim Moniz', note:'Vintage tram through the old hills.'}]},
+    {id:'banff', name:'Banff, Canada', accent:'#2FA88A', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Lake_Louise_Canada.JPG?width=700', tags:['mountains','hiking','nature'], bestTime:'Jun–Sep', budget:'high', summary:'Turquoise lakes and glacier valleys, best seen at sunrise before the crowds.', places:[{name:'Lake Louise', location:'Lake Louise Drive', note:'The classic glacier-fed lake.'},{name:'Moraine Lake', location:'Moraine Lake Road', note:'Ten peaks over blue water.'},{name:'Johnston Canyon', location:'Bow Valley Parkway', note:'A catwalk trail past waterfalls.'}]},
+    {id:'bali', name:'Bali, Indonesia', accent:'#3AA65A', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Bali_Rice_Terrace.JPG?width=700', tags:['beach','budget','relax'], bestTime:'Apr–Oct', budget:'low', summary:'Surf beaches in the south, rice terraces and yoga around Ubud.', places:[{name:'Tegallalang Rice Terraces', location:'Ubud', note:'Tiered green paddies on a hillside.'},{name:'Uluwatu Temple', location:'Pecatu', note:'Cliffside sunset temple.'},{name:'Ubud Monkey Forest', location:'Jalan Monkey Forest', note:'Shaded sanctuary with macaques.'}]},
+    {id:'reykjavik', name:'Reykjavik, Iceland', accent:'#3B7DD8', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Reykjav%C3%ADk_Old_Harbor.jpg?width=700', tags:['nature','road trip','northern lights'], bestTime:'Jun–Aug, Sep–Mar', budget:'high', summary:'A small walkable base for waterfalls, glaciers, and the Ring Road.', places:[{name:'Old Harbour', location:'Geirsgata', note:'Whale tours and seafood shacks.'},{name:'Hallgrímskirkja Church', location:'Hallgrímstorg', note:'Tallest building, rooftop views.'},{name:'Golden Circle Route', location:'Route 1 east', note:'Geysir, Gullfoss, Þingvellir loop.'}]},
+    {id:'marrakech', name:'Marrakech, Morocco', accent:'#D9455F', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Marrakesh_Jemaa_El_Fna.jpg?width=700', tags:['culture','budget','markets'], bestTime:'Mar–May, Sep–Nov', budget:'low to moderate', summary:"A dense medina of souks and riads, best entered without a fixed plan.", places:[{name:'Jemaa el-Fnaa Square', location:'Medina Quarter', note:'Market by day, food stalls by night.'},{name:'Jardin Majorelle', location:'Rue Yves Saint Laurent', note:'Cobalt-blue garden villa.'},{name:'Koutoubia Mosque', location:'Avenue Mohammed V', note:"The city's tallest minaret."}]},
+    {id:'queenstown', name:'Queenstown, New Zealand', accent:'#1F8FCB', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Lake_Wakatipu_%26_Remarkable_Mountains.jpg?width=700', tags:['mountains','adventure','lakes'], bestTime:'Dec–Feb, Jun–Aug', budget:'high', summary:"A glacial-lake town that's the country's adventure-sports hub.", places:[{name:'Lake Wakatipu Waterfront', location:'Marine Parade', note:'Lakeside walk under The Remarkables.'},{name:'Skyline Gondola', location:'Brecon Street', note:'Cable car with panoramic views.'},{name:'Milford Sound', location:'Fiordland, day trip', note:'Fjord of waterfalls and cliffs.'}]},
+    {id:'mexico-city', name:'Mexico City, Mexico', accent:'#E0B02E', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Plaza_de_la_Constituci%C3%B3n_-_Z%C3%B3calo_de_la_Ciudad_de_M%C3%A9xico_-_1.jpg?width=700', tags:['food','culture','city'], bestTime:'Mar–May', budget:'low to moderate', summary:'A sprawling capital with world-class museums and food worth planning meals around.', places:[{name:'Zócalo', location:'Centro Histórico', note:"The city's massive main square."},{name:'Frida Kahlo Museum', location:'Londres 247, Coyoacán', note:'The cobalt-blue Casa Azul.'},{name:'Bosque de Chapultepec', location:'Miguel Hidalgo', note:'City park, museums, hilltop castle.'}]}
+  ];
+
+  let allDestinations = [];
+  let savedIds = new Set();
+
+  async function loadDestinations(){
+    try{
+      const res = await fetch(`${API_BASE}/api/destinations`);
+      if(!res.ok) throw new Error('bad response');
+      allDestinations = await res.json();
+    }catch(e){
+      allDestinations = fallbackData;
+    }
+    renderFilters();
+    renderGrid(allDestinations);
+  }
+
+  function renderFilters(){
+    const tagSet = new Set();
+    allDestinations.forEach(d => (d.tags||[]).forEach(t => tagSet.add(t)));
+    const el = document.getElementById('filters');
+    el.innerHTML = '<button class="pill active" data-tag="all">All</button>' +
+      [...tagSet].slice(0,10).map(t => `<button class="pill" data-tag="${t}">${t}</button>`).join('');
+    el.querySelectorAll('.pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        el.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tag = btn.dataset.tag;
+        const filtered = tag === 'all' ? allDestinations : allDestinations.filter(d => (d.tags||[]).includes(tag));
+        renderGrid(filtered);
+      });
+    });
+  }
+
+  function renderGrid(list){
+    const grid = document.getElementById('grid');
+    grid.innerHTML = list.map((d, i) => {
+      const ratio = ratios[i % ratios.length];
+      const saved = savedIds.has(d.id);
+      const accent = d.accent || '#2E6FD9';
+      const placesHtml = (d.places || []).slice(0, 3).map(p => `
+        <li><span class="pname">${p.name}</span><span class="ploc">${p.location}</span></li>
+      `).join('');
+      return `
+        <div class="card" style="--accent:${accent}">
+          <div class="card-media" style="--ratio:${ratio}">
+            <img src="${d.image}" alt="${d.name}" loading="lazy" />
+            <span class="card-stamp">${(d.budget||'').split(' ')[0]}</span>
+            <span class="place-label">${d.name}</span>
+          </div>
+          <div class="card-body">
+            <p>${d.summary}</p>
+            ${placesHtml ? `<ul class="places-list">${placesHtml}</ul>` : ''}
+            <div class="card-meta">
+              <span>${d.bestTime||''}</span>
+              <button class="save-btn ${saved?'saved':''}" onclick="toggleSave('${d.id}', this)">${saved?'Saved':'Save'}</button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function toggleSave(id, btn){
+    if(savedIds.has(id)){ savedIds.delete(id); btn.classList.remove('saved'); btn.textContent='Save'; }
+    else{ savedIds.add(id); btn.classList.add('saved'); btn.textContent='Saved'; }
+  }
+
+  function handleSearch(){
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    if(!q){ renderGrid(allDestinations); return; }
+    const filtered = allDestinations.filter(d =>
+      d.name.toLowerCase().includes(q) ||
+      (d.summary||'').toLowerCase().includes(q) ||
+      (d.tags||[]).some(t => t.includes(q))
+    );
+    renderGrid(filtered.length ? filtered : allDestinations);
+    document.getElementById('grid').scrollIntoView({behavior:'smooth'});
+  }
+
+  function openChat(){
+    document.getElementById('chatWindow').classList.remove('hidden');
+  }
+  function toggleChat(){
+    document.getElementById('chatWindow').classList.toggle('hidden');
+  }
+
+  function appendMsg(text, role){
+    const log = document.getElementById('chatLog');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+
+  async function sendChat(){
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if(!text) return;
+    appendMsg(text, 'user');
+    input.value = '';
+    const typingEl = appendMsg('typing…', 'bot');
+    typingEl.classList.add('typing');
+
+    try{
+      const res = await fetch(`${API_BASE}/api/chat`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+      typingEl.remove();
+      appendMsg(data.reply || "I couldn't reach the guide's brain just now.", 'bot');
+    }catch(e){
+      typingEl.remove();
+      appendMsg("The backend isn't running, so I can't retrieve anything right now. Start the server (node server.js) and try again.", 'bot');
+    }
+  }
+
+  loadDestinations();
+</script>
+
+</body>
+</html>
